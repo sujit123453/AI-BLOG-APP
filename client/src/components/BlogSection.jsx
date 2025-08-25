@@ -1,11 +1,24 @@
 import React, { useState } from "react";
 import { blog_data, blogCategories } from "../assets/assets";
 import BlogLists from "./BlogLists";
+import { useAppContext } from "../context/AppContext";
 
 const BlogSection = () => {
   const [menu, setMenu] = useState("All");
+  const { blogs, input } = useAppContext();
 
-  const filteredBlogs = blog_data.filter((blog) =>
+  const searchFilteredBlogs = () => {
+    if (input == "") {
+      return blogs;
+    }
+    return blogs.filter(
+      (blog) =>
+        blog.title.toLowerCase().includes(input.toLowerCase()) ||
+        blog.category.toLowerCase().includes(input.toLowerCase())
+    );
+  };
+
+  const filteredBlogs = searchFilteredBlogs().filter((blog) =>
     menu === "All" ? true : blog.category === menu
   );
 

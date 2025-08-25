@@ -14,8 +14,6 @@ import { useAppContext } from "./context/AppContext";
 const App = () => {
   const { token } = useAppContext();
   return (
-    // className="min-h-screen bg-gradient-to-br from-white via-[#e6f0ff] to-blue-100"
-
     <div>
       <Toaster />
       <Routes>

@@ -1,20 +1,39 @@
-import { Database, Home, List, MessageCircleCode } from "lucide-react";
+import {
+  Database,
+  DraftingCompass,
+  Home,
+  List,
+  MessageCircleCode,
+  Pencil,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { assets, dashboard_data } from "../../assets/assets";
 import BlogTable from "../../components/admin/BlogTable";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const Daseboard = () => {
   const navigate = useNavigate();
-  const [daseboardData, setDashboardData] = useState({
+  const [dashboardData, setDashboardData] = useState({
     blogs: 0,
     comments: 0,
     drafts: 0,
     recentBlogs: [],
   });
 
+  const { axios } = useAppContext();
+
   const fetchDashboard = async () => {
-    setDashboardData(dashboard_data);
+    try {
+      const { data } = await axios.get("/api/admin/dashboard");
+      data.success
+        ? setDashboardData(data.dashboardData)
+        : toast.error(data.message);
+    } catch (error) {
+      console.log("Kumar");
+      toast.error(error.message);
+    }
   };
   useEffect(() => {
     fetchDashboard();
@@ -28,7 +47,7 @@ const Daseboard = () => {
         >
           <Home className="text-primary cursor-pointer hover:scale-100 transition duration-300 hover:text-primary" />
           <p className="text-xl font-semibold text-gray-600">
-            {dashboard_data.blogs}
+            {dashboardData.blogs}
           </p>
           <p className="text-gray-400 font-light">Blogs</p>
         </div>
@@ -39,7 +58,7 @@ const Daseboard = () => {
         >
           <MessageCircleCode className="text-primary cursor-pointer hover:scale-100 transition duration-300 hover:text-primary " />
           <p className="text-xl font-semibold text-gray-600">
-            {dashboard_data.comments}
+            {dashboardData.comments}
           </p>
           <p className="text-gray-400 font-light">Comments</p>
         </div>
@@ -48,11 +67,11 @@ const Daseboard = () => {
           onClick={() => navigate("/admin/addBlog")}
           className="flex items-center gap-4 bg-white p-4 min-w-58 rounded shadow cursor-pointer hover:scale-105 transition-all"
         >
-          <List className="text-primary cursor-pointer hover:scale-100 transition duration-300 hover:text-primary" />
+          <Pencil className="text-primary cursor-pointer hover:scale-100 transition duration-300 hover:text-primary" />
           <p className="text-xl font-semibold text-gray-600">
-            {dashboard_data.blogs}
+            {dashboardData.drafts}
           </p>
-          <p className="text-gray-400 font-light">Lists</p>
+          <p className="text-gray-400 font-light">Drafts</p>
         </div>
       </div>
       <div>
@@ -82,7 +101,7 @@ const Daseboard = () => {
               </tr>
             </thead>
             <tbody>
-              {daseboardData.recentBlogs.map((blog, index) => {
+              {dashboardData.recentBlogs.map((blog, index) => {
                 return (
                   <BlogTable
                     key={blog._id}

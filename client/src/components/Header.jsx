@@ -1,8 +1,20 @@
 import { WandSparkles, Search } from "lucide-react";
-import React from "react";
+import React, { useRef } from "react";
 import { assets } from "../assets/assets";
+import { useAppContext } from "../context/AppContext";
 
 const Header = () => {
+  const { setInput, input } = useAppContext();
+  const inputRef = useRef();
+
+  const onSubmitHandler = (e) => {
+    e.preventDefault();
+    setInput(inputRef.current.value);
+  };
+  const onClear = () => {
+    setInput("");
+    inputRef.current.value = "";
+  };
   return (
     <div className="mx-8 sm:mx-16 xl:mx-24 relative">
       <div className="text-center mt-20 mb-8">
@@ -25,13 +37,17 @@ const Header = () => {
           write without filters. Whether it's one word or a thousand, yout story
           starts right here.
         </p>
-        <form className="flex justify-between max-w-lg mx-auto max-sm:scale-75 border border-gray-300 bg-white rounded overflow-hidden p-3">
+        <form
+          onSubmit={onSubmitHandler}
+          className="flex justify-between max-w-lg mx-auto max-sm:scale-75 border border-gray-300 bg-white rounded overflow-hidden p-3"
+        >
           <div className="flex gap-2 ">
             <Search
               size={40}
               className="opacity-80 text-primary pt-1 cursor-pointer"
             />
             <input
+              ref={inputRef}
               className="outline-none w-full pl-2"
               type="text"
               placeholder="Search for blogs..."
@@ -44,6 +60,16 @@ const Header = () => {
             Apply
           </button>
         </form>
+      </div>
+      <div className="text-center">
+        {input && (
+          <button
+            onClick={onClear}
+            className="border font-light text-xs py-1 px-3 rounded-sm shadow-custom-sm bg-primary/5 text-primary transition hover:scale-110 duration-200 cursor-pointer"
+          >
+            Clear Search
+          </button>
+        )}
       </div>
       <img
         src={assets.gradientBackground}
